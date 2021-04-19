@@ -5,8 +5,10 @@ import com.jdirene.transaction.mock.di.appModule
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.gson.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.get
 import org.koin.logger.slf4jLogger
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -24,6 +26,11 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
+
+        get("health") {
+            call.respond("{\"status\":\"up\"}")
+        }
+
         transactionRoutes()
     }
 }
