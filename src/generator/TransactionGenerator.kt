@@ -20,7 +20,7 @@ class TransactionGenerator(private val textGenerator: TextGenerator) {
     }
 
     private fun calcTransactionListLength(userId: Int, month: Int): Int {
-        return userId.toString().first().toInt() * month
+        return Character.getNumericValue(userId.toString().first()) * month
     }
 
     private fun generateTransaction(userId: Int, year: Int, month: Int, transactionIndex: Int): Transaction {

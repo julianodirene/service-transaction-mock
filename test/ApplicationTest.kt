@@ -12,11 +12,11 @@ import io.ktor.server.testing.*
 
 class ApplicationTest {
     @Test
-    fun testRoot() {
+    fun testHealth() {
         withTestApplication({ module(testing = true) }) {
-            handleRequest(HttpMethod.Get, "/").apply {
+            handleRequest(HttpMethod.Get, "/health").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("HELLO WORLD!", response.content)
+                assertEquals("{\"status\":\"up\"}", response.content)
             }
         }
     }

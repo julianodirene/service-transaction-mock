@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  transaction-mock:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    network_mode:
+      host
+    environment:
+      - PORT=8080
