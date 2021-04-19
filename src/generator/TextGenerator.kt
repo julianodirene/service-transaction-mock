@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 class TextGenerator {
 
-    private val firstLetterPossibilities = "abcdefghijlmnopqrstuvxz"
+    //    private val firstLetterPossibilities = "abcdefghijlmnopqrstuvxz"
     private val nextLetterPossibilitiesGraph = mapOf(
         'a' to "bcdefghijlmnopqrstuvxz",
         'b' to "aeioulr",
@@ -17,18 +17,18 @@ class TextGenerator {
         'i' to "abcdefghjlmnopqrstuvxz",
         'j' to "aeiou",
         'l' to "aeiouh",
-        'm' to "aeiou", // TODO verificar se vale a pena uma logica para incluir m antes de P e B
+        'm' to "aeiou",
         'n' to "aeiou",
         'o' to "abcdefghijlmnpqrstuvxz",
         'p' to "aeioulr",
-        'q' to "aeio",
         'r' to "aeiou",
         's' to "aeiou",
         't' to "aeioulr",
         'u' to "abcdefghijlmnopqrstvxz",
         'v' to "aeiou",
         'x' to "aeiou",
-        'z' to "aeiou"
+        'z' to "aeiou",
+        'q' to "aeio"
     )
     private val lastLetterPossibilities = "aeioulmrsz"
     private val vowels = "aeiou"
@@ -37,7 +37,6 @@ class TextGenerator {
     private val maxWordLength = 10
     private val maxWordCount = 10
 
-    //TODO Garantir tamanho minimo do texto
     fun generateText(seed: Int, minLength: Int, maxLength: Int): String {
         var text = ""
         val random = Random(seed)
@@ -51,8 +50,18 @@ class TextGenerator {
             val maxWordLength = random.nextInt(minWordLength, maxWordLength)
             text += generateWord(random, maxWordLength) + " "
         }
+        text = text.trim()
 
-        return text.trim().capitalize()
+        if(text.length < minLength){
+            val missingChars = minLength - text.length
+            if(missingChars == 1){
+                text+= '.'
+            } else {
+                text += generateWord(random, missingChars)
+            }
+        }
+
+        return text.capitalize()
     }
 
     private fun generateWord(random: Random, maxLength: Int): String {
@@ -64,24 +73,34 @@ class TextGenerator {
     }
 
     private fun getFirstLetter(random: Random): Char {
-        return firstLetterPossibilities[random.nextInt(0, firstLetterPossibilities.length)]
+        val firstLetterPossibilities = nextLetterPossibilitiesGraph.keys.toList()
+        return firstLetterPossibilities[random.nextInt(0, firstLetterPossibilities.size - 1)]
     }
 
     private fun getNextLetter(word: String, wordMaxLength: Int, random: Random): String {
-        val lastLetter = word.last()
+        val beforeLetter = word.last()
         val letterIndex = word.length
-        // TODO Letra Q não pode ser a pnultima
+        val isLastLetter = letterIndex == wordMaxLength
+        val isPenultimateLetter = letterIndex == (wordMaxLength - 1)
 
-        val possibleLetters = if (letterIndex == wordMaxLength && vowels.contains(lastLetter))
+        val possibleLetters = if (isLastLetter && vowels.contains(beforeLetter))
             lastLetterPossibilities
         else
-            nextLetterPossibilitiesGraph[lastLetter]!!
+            nextLetterPossibilitiesGraph[beforeLetter]!!
 
-        val nextRandomIndex = random.nextInt(0, possibleLetters.length)
+        /**
+         * Avoid pnultimate letter is q to don't exceed the maximum length
+         */
+        val maxNextLetterIndex = if(isPenultimateLetter){
+            possibleLetters.length - 2
+        } else {
+            possibleLetters.length - 1
+        }
+        val nextRandomIndex = random.nextInt(0, maxNextLetterIndex)
 
         val nextLetter: Char = possibleLetters[nextRandomIndex]
 
-        return if (lastLetter == 'q')
+        return if (beforeLetter == 'q')
             "u$nextLetter"
         else
             nextLetter.toString()
