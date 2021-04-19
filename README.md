@@ -27,7 +27,7 @@ Status 200 OK
 [
   {
     "descricao": "Descrição da transação",
-    "data": 18735,
+    "data": 1617321600000,
     "valor": 453616
   }
 ]
