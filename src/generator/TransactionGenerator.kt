@@ -42,7 +42,7 @@ class TransactionGenerator(private val textGenerator: TextGenerator) {
         val yearMonth = YearMonth.of(year, month)
         val random = Random(userId * year * month * transactionIndex)
         val day = random.nextInt(1, yearMonth.lengthOfMonth())
-        return LocalDate.of(year, month, day).toEpochDay() //TODO Verificar se o timestamp pedido é igual ao epochDay
+        return LocalDate.of(year, month, day).toEpochDay()
     }
 
     private fun generateValue(userId: Int, month: Int, transactionIndex: Int): Int {
