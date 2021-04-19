@@ -3,6 +3,8 @@ package com.jdirene.transaction.mock.generator
 import com.jdirene.transaction.mock.domain.Transaction
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.ZoneId
+import java.time.ZoneOffset
 import kotlin.random.Random
 
 class TransactionGenerator(private val textGenerator: TextGenerator) {
@@ -42,7 +44,8 @@ class TransactionGenerator(private val textGenerator: TextGenerator) {
         val yearMonth = YearMonth.of(year, month)
         val random = Random(userId * year * month * transactionIndex)
         val day = random.nextInt(1, yearMonth.lengthOfMonth())
-        return LocalDate.of(year, month, day).toEpochDay()
+
+        return LocalDate.of(year, month, day).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
     }
 
     private fun generateValue(userId: Int, month: Int, transactionIndex: Int): Int {
